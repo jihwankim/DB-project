@@ -30,7 +30,7 @@ namespace DB_Project
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
-        public string GetActiveProcessFileName()
+        public static string GetActiveProcessFileName()
         {
             IntPtr hwnd = GetForegroundWindow();
             uint pid;
@@ -52,7 +52,7 @@ namespace DB_Project
             InsertTimer.Stop();
 
             // Displays a message box asking whether to continue running the timer.
-            if (MessageBox.Show("Continue running?", "Count is: " + alarmCounter,
+            if (MessageBox.Show("Continue running?", "Count is: " + GetActiveProcessFileName(),//alarmCounter,
                MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 // Restarts the timer and increments the counter.
