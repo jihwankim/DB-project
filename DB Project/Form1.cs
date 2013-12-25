@@ -20,10 +20,12 @@ namespace DB_Project
     public partial class Form1 : Form
     {
         // Value
-        string HookRecord;
+        static List<Input> inputLog = new List<Input>();
+        //static string HookType = "";
+        //static string HookRecord = "";
         bool LoginSuccess = false;
         static MySqlConnection connection;
-        int interval = 500;
+        int interval = 1000;
         UserActivityHook actHook;
         static System.Windows.Forms.Timer InsertTimer = new System.Windows.Forms.Timer();
 
@@ -80,15 +82,7 @@ namespace DB_Project
                     reader.Close();
             }
 
-            return;
-            // Hooker install
-            actHook = new UserActivityHook(); // crate an instance with global hooks
-            // hang on events
-            actHook.OnMouseActivity += new MouseEventHandler(MouseMoved);
-            actHook.KeyDown += new KeyEventHandler(MyKeyDown);
-            actHook.KeyPress += new KeyPressEventHandler(MyKeyPress);
-            actHook.KeyUp += new KeyEventHandler(MyKeyUp);
-
+            HookerInit();
         }
         private void LoginRequest(object sender, EventArgs e)
         {
@@ -147,11 +141,13 @@ namespace DB_Project
 
         private void RecordingStart(object sender, EventArgs e)
         {
+            actHook.Start();
             InsertTimer.Start();
         }
 
         private void RecordingPause(object sender, EventArgs e)
         {
+            actHook.Stop();
             InsertTimer.Stop();
         }
 
@@ -162,79 +158,97 @@ namespace DB_Project
 
 
         // Hooker
+        //[STAThread]
+        void HookerInit()
+        {
+            // Hooker install
+            actHook = new UserActivityHook(); // crate an instance with global hooks
+            actHook.Stop();
+            // hang on events
+            actHook.OnMouseActivity += new MouseEventHandler(MouseMoved);
+            actHook.KeyDown += new KeyEventHandler(MyKeyDown);
+            actHook.KeyPress += new KeyPressEventHandler(MyKeyPress);
+            actHook.KeyUp += new KeyEventHandler(MyKeyUp);
+        }
         private static void InsertRecord(Object myObject, EventArgs myEventArgs)
         {
             InsertTimer.Stop();
 
+            for(int i=0; false && i<inputLog.Count; ++i)
+            {
+                // Insert Application Name
+                MySqlCommand insertCommand = new MySqlCommand();
+                //applicationName = GetActiveProcessFileName();
+                insertCommand.Connection = connection;
+                insertCommand.CommandText = "INSERT INTO application(name) VALUES(@name)";
 
-            // Insert Application Name
-            MySqlCommand insertCommand = new MySqlCommand();
-            string name = GetActiveProcessFileName();
-            insertCommand.Connection = connection;
-            insertCommand.CommandText = "INSERT INTO application(name) VALUES(@name)";
+                insertCommand.Parameters.AddWithValue("@name", inputLog[i].appName);
 
-            insertCommand.Parameters.Add("@name", MySqlDbType.VarChar, name.Length);
-            insertCommand.Parameters[0].Value = name;
+                try { insertCommand.ExecuteNonQuery(); }
+                catch { }
 
-            try { insertCommand.ExecuteNonQuery(); }
-            catch { }
+                // Insert Date
+                insertCommand.CommandText = "INSERT INTO date(YMD) VALUES(@YMD)";
 
-            // Insert Date
-            insertCommand = new MySqlCommand();
-            insertCommand.Connection = connection;
-            insertCommand.CommandText = "INSERT INTO date(YMD) VALUES(@YMD)";
+                insertCommand.Parameters.AddWithValue("@YMD", inputLog[i].date);
 
-            
-            insertCommand.Parameters.Add("@YMD", MySqlDbType.Date, 10);
-            insertCommand.Parameters[0].Value = DateTime.Today.ToString("yyyy-MM-dd");
+                try { insertCommand.ExecuteNonQuery(); }
+                catch { }
 
-            try { insertCommand.ExecuteNonQuery(); }
-            catch { }
+                //Insert Input Data
+                insertCommand.CommandText = "INSERT INTO input(Type, Value, time, Date_YMD, Application_name) VALUES(@Type, @Value, @time, @Date_YMD, @Application_name)";
 
-            // Get Focused Application's Name
+                insertCommand.Parameters.AddWithValue("@Type", inputLog[i].Type);
+                insertCommand.Parameters.AddWithValue("@Value", inputLog[i].Record);
+                insertCommand.Parameters.AddWithValue("@time", inputLog[i].time);
+                insertCommand.Parameters.AddWithValue("@Date_YMD", inputLog[i].date);
+                insertCommand.Parameters.AddWithValue("@Application_name", inputLog[i].appName);
 
-            // Insert Record about now input
+                try { insertCommand.ExecuteNonQuery(); }
+                catch { }
+            }
 
-
-            // Displays a message box asking whether to continue running the timer.
-//             if (MessageBox.Show("Continue running?", "Count is: " + GetActiveProcessFileName(),//alarmCounter,
-//                MessageBoxButtons.YesNo) == DialogResult.Yes)
-//             {
-//                 // Restarts the timer and increments the counter.
-//                 alarmCounter += 1;
-//                 //InsertTimer.Enabled = true;
-//             }
-//             else
-//             {
-//                 // Stops the timer.
-//                 //exitFlag = true;
-//             }
+            inputLog.Clear();
+            InsertTimer.Enabled = true;
         }
         public void MouseMoved(object sender, MouseEventArgs e)
         {
-            //labelMousePosition.Text = String.Format("x={0}  y={1} wheel={2}", e.X, e.Y, e.Delta);
-            //if (e.Clicks > 0) LogWrite("MouseButton 	- " + e.Button.ToString());
+            WriteLog("Mouse", String.Format("x={0},y={1},wheel={2}", e.X, e.Y, e.Delta));
         }
 
         public void MyKeyDown(object sender, KeyEventArgs e)
         {
-            //LogWrite("KeyDown 	- " + e.KeyData.ToString());
+            WriteLog("Keyboard", String.Format("KeyDown {0}", e.KeyData.ToString()));
         }
 
         public void MyKeyPress(object sender, KeyPressEventArgs e)
         {
-            //LogWrite("KeyPress 	- " + e.KeyChar);
+            WriteLog("Keyboard", String.Format("KeyPress {0}", e.ToString()));
         }
 
         public void MyKeyUp(object sender, KeyEventArgs e)
         {
-            //LogWrite("KeyUp 		- " + e.KeyData.ToString());
+            WriteLog("Keyboard", String.Format("KeyUp {0}", e.KeyData.ToString()));
         }
-
-        private void LogWrite(string txt)
+        public void WriteLog(string type, string record)
         {
-            //textBox.AppendText(txt + Environment.NewLine);
-            //textBox.SelectionStart = textBox.Text.Length;
+            inputLog.Add(new Input(type, record, GetActiveProcessFileName(), DateTime.Today.ToString("yyyyMMdd"), DateTime.Now.ToString("HH:mm:ss")));
         }
+    }
+    public class Input
+    {
+        public Input(string iType, string iRecord, string iAppName, string iDate, string iTime)
+        {
+            Type = iType;
+            Record = iRecord;
+            appName = iAppName;
+            date = iDate;
+            time = iTime;
+        }
+        public string Type { get; set; }
+        public string Record { get; set; }
+        public string appName { get; set; }
+        public string date { get; set; }
+        public string time { get; set; }
     }
 }
