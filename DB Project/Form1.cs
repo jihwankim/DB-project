@@ -13,14 +13,18 @@ using MySql.Data.MySqlClient;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using gma.System.Windows;
+
 namespace DB_Project
 {
     public partial class Form1 : Form
     {
         // Value
+        string HookRecord;
         bool LoginSuccess = false;
-        MySqlConnection connection;
+        static MySqlConnection connection;
         int interval = 500;
+        UserActivityHook actHook;
         static System.Windows.Forms.Timer InsertTimer = new System.Windows.Forms.Timer();
 
         // DLL LOAD
@@ -45,34 +49,13 @@ namespace DB_Project
             FunctionPanel.Enabled = false;
         }
 
-        static int alarmCounter = 1;
-        private static void TimerEventProcessor(Object myObject,
-                                            EventArgs myEventArgs)
-        {
-            InsertTimer.Stop();
-
-            // Displays a message box asking whether to continue running the timer.
-            if (MessageBox.Show("Continue running?", "Count is: " + GetActiveProcessFileName(),//alarmCounter,
-               MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                // Restarts the timer and increments the counter.
-                alarmCounter += 1;
-                //InsertTimer.Enabled = true;
-            }
-            else
-            {
-                // Stops the timer.
-                //exitFlag = true;
-            }
-        }
-
         // LOGIN PANEL ///////////////////////////////////////////////
         private void Login()
         {
             LoginPanel.Enabled = false;
             FunctionPanel.Enabled = true;
 
-            InsertTimer.Tick += new EventHandler(TimerEventProcessor);
+            InsertTimer.Tick += new EventHandler(InsertRecord);
             InsertTimer.Interval = interval;
 
             // Load Tables
@@ -96,6 +79,15 @@ namespace DB_Project
                 if (reader != null)
                     reader.Close();
             }
+
+            return;
+            // Hooker install
+            actHook = new UserActivityHook(); // crate an instance with global hooks
+            // hang on events
+            actHook.OnMouseActivity += new MouseEventHandler(MouseMoved);
+            actHook.KeyDown += new KeyEventHandler(MyKeyDown);
+            actHook.KeyPress += new KeyPressEventHandler(MyKeyPress);
+            actHook.KeyUp += new KeyEventHandler(MyKeyUp);
 
         }
         private void LoginRequest(object sender, EventArgs e)
@@ -136,6 +128,7 @@ namespace DB_Project
             return result;
         }
 
+        // Record Update
         private DataTable data;
         private MySqlDataAdapter da;
         private MySqlCommandBuilder cb;
@@ -165,6 +158,83 @@ namespace DB_Project
         private void ProcessBackGround(object sender, EventArgs e)
         {
 
+        }
+
+
+        // Hooker
+        private static void InsertRecord(Object myObject, EventArgs myEventArgs)
+        {
+            InsertTimer.Stop();
+
+
+            // Insert Application Name
+            MySqlCommand insertCommand = new MySqlCommand();
+            string name = GetActiveProcessFileName();
+            insertCommand.Connection = connection;
+            insertCommand.CommandText = "INSERT INTO application(name) VALUES(@name)";
+
+            insertCommand.Parameters.Add("@name", MySqlDbType.VarChar, name.Length);
+            insertCommand.Parameters[0].Value = name;
+
+            try { insertCommand.ExecuteNonQuery(); }
+            catch { }
+
+            // Insert Date
+            insertCommand = new MySqlCommand();
+            insertCommand.Connection = connection;
+            insertCommand.CommandText = "INSERT INTO date(YMD) VALUES(@YMD)";
+
+            
+            insertCommand.Parameters.Add("@YMD", MySqlDbType.Date, 10);
+            insertCommand.Parameters[0].Value = DateTime.Today.ToString("yyyy-MM-dd");
+
+            try { insertCommand.ExecuteNonQuery(); }
+            catch { }
+
+            // Get Focused Application's Name
+
+            // Insert Record about now input
+
+
+            // Displays a message box asking whether to continue running the timer.
+//             if (MessageBox.Show("Continue running?", "Count is: " + GetActiveProcessFileName(),//alarmCounter,
+//                MessageBoxButtons.YesNo) == DialogResult.Yes)
+//             {
+//                 // Restarts the timer and increments the counter.
+//                 alarmCounter += 1;
+//                 //InsertTimer.Enabled = true;
+//             }
+//             else
+//             {
+//                 // Stops the timer.
+//                 //exitFlag = true;
+//             }
+        }
+        public void MouseMoved(object sender, MouseEventArgs e)
+        {
+            //labelMousePosition.Text = String.Format("x={0}  y={1} wheel={2}", e.X, e.Y, e.Delta);
+            //if (e.Clicks > 0) LogWrite("MouseButton 	- " + e.Button.ToString());
+        }
+
+        public void MyKeyDown(object sender, KeyEventArgs e)
+        {
+            //LogWrite("KeyDown 	- " + e.KeyData.ToString());
+        }
+
+        public void MyKeyPress(object sender, KeyPressEventArgs e)
+        {
+            //LogWrite("KeyPress 	- " + e.KeyChar);
+        }
+
+        public void MyKeyUp(object sender, KeyEventArgs e)
+        {
+            //LogWrite("KeyUp 		- " + e.KeyData.ToString());
+        }
+
+        private void LogWrite(string txt)
+        {
+            //textBox.AppendText(txt + Environment.NewLine);
+            //textBox.SelectionStart = textBox.Text.Length;
         }
     }
 }
