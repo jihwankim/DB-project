@@ -38,6 +38,7 @@ namespace DB_Project
                 LoginPanel.Enabled = false;
                 FunctionPanel.Enabled = true;
 
+                // Load Tables
                 MySqlDataReader reader = null;
                 connection.ChangeDatabase("mydb");
 
@@ -47,9 +48,7 @@ namespace DB_Project
                     reader = cmd.ExecuteReader();
                     TableList.Items.Clear();
                     while (reader.Read())
-                    {
                         TableList.Items.Add(reader.GetString(0));
-                    }
                 }
                 catch (MySqlException ex)
                 {
@@ -90,8 +89,20 @@ namespace DB_Project
             return result;
         }
 
+        private DataTable data;
+        private MySqlDataAdapter da;
+        private MySqlCommandBuilder cb;
+
         private void TableChange(object sender, EventArgs e)
         {
+            data = new DataTable();
+
+            da = new MySqlDataAdapter("SELECT * FROM " + TableList.SelectedItem.ToString(), connection);
+            cb = new MySqlCommandBuilder(da);
+
+            da.Fill(data);
+
+            DataList.DataSource = data;
         }
     }
 }
