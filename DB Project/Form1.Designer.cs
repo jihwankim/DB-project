@@ -28,12 +28,163 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.LoginPanel = new System.Windows.Forms.Panel();
+            this.LoginPanel_OK = new System.Windows.Forms.Button();
+            this.LoginPanel_Password = new System.Windows.Forms.TextBox();
+            this.LoginPanel_ID = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.파일FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.편집EToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.도움말HToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.정보ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.종료ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoginPanel.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // LoginPanel
+            // 
+            this.LoginPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.LoginPanel.Controls.Add(this.LoginPanel_OK);
+            this.LoginPanel.Controls.Add(this.LoginPanel_Password);
+            this.LoginPanel.Controls.Add(this.LoginPanel_ID);
+            this.LoginPanel.Controls.Add(this.label2);
+            this.LoginPanel.Controls.Add(this.label1);
+            this.LoginPanel.Location = new System.Drawing.Point(408, 38);
+            this.LoginPanel.Name = "LoginPanel";
+            this.LoginPanel.Size = new System.Drawing.Size(176, 52);
+            this.LoginPanel.TabIndex = 0;
+            // 
+            // LoginPanel_OK
+            // 
+            this.LoginPanel_OK.Location = new System.Drawing.Point(141, 26);
+            this.LoginPanel_OK.Name = "LoginPanel_OK";
+            this.LoginPanel_OK.Size = new System.Drawing.Size(32, 23);
+            this.LoginPanel_OK.TabIndex = 2;
+            this.LoginPanel_OK.Text = "OK";
+            this.LoginPanel_OK.UseVisualStyleBackColor = true;
+            this.LoginPanel_OK.Click += new System.EventHandler(this.LoginRequest);
+            // 
+            // LoginPanel_Password
+            // 
+            this.LoginPanel_Password.Location = new System.Drawing.Point(78, 28);
+            this.LoginPanel_Password.MaxLength = 10;
+            this.LoginPanel_Password.Name = "LoginPanel_Password";
+            this.LoginPanel_Password.PasswordChar = '*';
+            this.LoginPanel_Password.Size = new System.Drawing.Size(61, 21);
+            this.LoginPanel_Password.TabIndex = 1;
+            this.LoginPanel_Password.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LoginKeyProcess);
+            // 
+            // LoginPanel_ID
+            // 
+            this.LoginPanel_ID.Location = new System.Drawing.Point(78, 3);
+            this.LoginPanel_ID.MaxLength = 10;
+            this.LoginPanel_ID.Name = "LoginPanel_ID";
+            this.LoginPanel_ID.Size = new System.Drawing.Size(61, 21);
+            this.LoginPanel_ID.TabIndex = 0;
+            this.LoginPanel_ID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LoginKeyProcess);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 31);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 12);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "PASSWORD";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(56, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 12);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "ID";
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.파일FToolStripMenuItem,
+            this.편집EToolStripMenuItem,
+            this.도움말HToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(584, 24);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // 파일FToolStripMenuItem
+            // 
+            this.파일FToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.종료ToolStripMenuItem});
+            this.파일FToolStripMenuItem.Name = "파일FToolStripMenuItem";
+            this.파일FToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.파일FToolStripMenuItem.Text = "파일(&F)";
+            // 
+            // 편집EToolStripMenuItem
+            // 
+            this.편집EToolStripMenuItem.Name = "편집EToolStripMenuItem";
+            this.편집EToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.편집EToolStripMenuItem.Text = "편집(E)";
+            // 
+            // 도움말HToolStripMenuItem
+            // 
+            this.도움말HToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.정보ToolStripMenuItem});
+            this.도움말HToolStripMenuItem.Name = "도움말HToolStripMenuItem";
+            this.도움말HToolStripMenuItem.Size = new System.Drawing.Size(72, 20);
+            this.도움말HToolStripMenuItem.Text = "도움말(&H)";
+            // 
+            // 정보ToolStripMenuItem
+            // 
+            this.정보ToolStripMenuItem.Name = "정보ToolStripMenuItem";
+            this.정보ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.정보ToolStripMenuItem.Text = "정보";
+            // 
+            // 종료ToolStripMenuItem
+            // 
+            this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
+            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.종료ToolStripMenuItem.Text = "종료";
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "Form1";
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(584, 361);
+            this.ControlBox = false;
+            this.Controls.Add(this.LoginPanel);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
+            this.Name = "Form1";
+            this.Text = "DB Project #131018 kim-jihwan";
+            this.LoginPanel.ResumeLayout(false);
+            this.LoginPanel.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel LoginPanel;
+        private System.Windows.Forms.TextBox LoginPanel_Password;
+        private System.Windows.Forms.TextBox LoginPanel_ID;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button LoginPanel_OK;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 파일FToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 종료ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 편집EToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 도움말HToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 정보ToolStripMenuItem;
     }
 }
 
