@@ -10,14 +10,34 @@ using System.Windows.Forms;
 
 using MySql.Data.MySqlClient;
 
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+
 namespace DB_Project
 {
     public partial class Form1 : Form
     {
         // Value
         bool LoginSuccess = false;
-        MySqlConnection connection; 
+        MySqlConnection connection;
+        int interval = 500;
+        static System.Windows.Forms.Timer InsertTimer = new System.Windows.Forms.Timer();
 
+        // DLL LOAD
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint ProcessId);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        public string GetActiveProcessFileName()
+        {
+            IntPtr hwnd = GetForegroundWindow();
+            uint pid;
+            GetWindowThreadProcessId(hwnd, out pid);
+            Process p = Process.GetProcessById((int)pid);
+            return p.MainModule.ModuleName;
+        }
         //
         public Form1()
         {
@@ -25,7 +45,59 @@ namespace DB_Project
             FunctionPanel.Enabled = false;
         }
 
+        static int alarmCounter = 1;
+        private static void TimerEventProcessor(Object myObject,
+                                            EventArgs myEventArgs)
+        {
+            InsertTimer.Stop();
+
+            // Displays a message box asking whether to continue running the timer.
+            if (MessageBox.Show("Continue running?", "Count is: " + alarmCounter,
+               MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // Restarts the timer and increments the counter.
+                alarmCounter += 1;
+                //InsertTimer.Enabled = true;
+            }
+            else
+            {
+                // Stops the timer.
+                //exitFlag = true;
+            }
+        }
+
         // LOGIN PANEL ///////////////////////////////////////////////
+        private void Login()
+        {
+            LoginPanel.Enabled = false;
+            FunctionPanel.Enabled = true;
+
+            InsertTimer.Tick += new EventHandler(TimerEventProcessor);
+            InsertTimer.Interval = interval;
+
+            // Load Tables
+            MySqlDataReader reader = null;
+            connection.ChangeDatabase("mydb");
+
+            MySqlCommand cmd = new MySqlCommand("SHOW TABLES", connection);
+            try
+            {
+                reader = cmd.ExecuteReader();
+                TableList.Items.Clear();
+                while (reader.Read())
+                    TableList.Items.Add(reader.GetString(0));
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show("Failed to populate table list: " + ex.Message);
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+            }
+
+        }
         private void LoginRequest(object sender, EventArgs e)
         {
             string ID = LoginPanel_ID.Text;
@@ -34,32 +106,7 @@ namespace DB_Project
             LoginSuccess = TryLogin(ID, password);
 
             if (LoginSuccess == true)
-            {
-                LoginPanel.Enabled = false;
-                FunctionPanel.Enabled = true;
-
-                // Load Tables
-                MySqlDataReader reader = null;
-                connection.ChangeDatabase("mydb");
-
-                MySqlCommand cmd = new MySqlCommand("SHOW TABLES", connection);
-                try
-                {
-                    reader = cmd.ExecuteReader();
-                    TableList.Items.Clear();
-                    while (reader.Read())
-                        TableList.Items.Add(reader.GetString(0));
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("Failed to populate table list: " + ex.Message);
-                }
-                finally
-                {
-                    if (reader != null)
-                        reader.Close();
-                }
-            }
+                Login();
             else
                 LoginPanel_Password.Text = "";
         }
@@ -103,6 +150,21 @@ namespace DB_Project
             da.Fill(data);
 
             DataList.DataSource = data;
+        }
+
+        private void RecordingStart(object sender, EventArgs e)
+        {
+            InsertTimer.Start();
+        }
+
+        private void RecordingPause(object sender, EventArgs e)
+        {
+            InsertTimer.Stop();
+        }
+
+        private void ProcessBackGround(object sender, EventArgs e)
+        {
+
         }
     }
 }

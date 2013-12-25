@@ -38,6 +38,7 @@
             this.파일FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.종료ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.편집EToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.설정ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.도움말HToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.정보ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FunctionPanel = new System.Windows.Forms.Panel();
@@ -45,11 +46,10 @@
             this.FunctionPanel_Stop = new System.Windows.Forms.Button();
             this.FunctionPanel_Record = new System.Windows.Forms.Button();
             this.QueryPanel = new System.Windows.Forms.Panel();
-            this.설정ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DataList = new System.Windows.Forms.DataGridView();
             this.process1 = new System.Diagnostics.Process();
             this.TableList = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.DataList = new System.Windows.Forms.DataGridView();
             this.LoginPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.FunctionPanel.SuspendLayout();
@@ -141,7 +141,7 @@
             // 종료ToolStripMenuItem
             // 
             this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
-            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.종료ToolStripMenuItem.Text = "종료";
             // 
             // 편집EToolStripMenuItem
@@ -149,6 +149,12 @@
             this.편집EToolStripMenuItem.Name = "편집EToolStripMenuItem";
             this.편집EToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.편집EToolStripMenuItem.Text = "편집(E)";
+            // 
+            // 설정ToolStripMenuItem
+            // 
+            this.설정ToolStripMenuItem.Name = "설정ToolStripMenuItem";
+            this.설정ToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.설정ToolStripMenuItem.Text = "설정(O)";
             // 
             // 도움말HToolStripMenuItem
             // 
@@ -161,7 +167,7 @@
             // 정보ToolStripMenuItem
             // 
             this.정보ToolStripMenuItem.Name = "정보ToolStripMenuItem";
-            this.정보ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.정보ToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.정보ToolStripMenuItem.Text = "정보";
             // 
             // FunctionPanel
@@ -184,6 +190,7 @@
             this.FunctionPanel_Hide.TabIndex = 5;
             this.FunctionPanel_Hide.Text = "＿";
             this.FunctionPanel_Hide.UseVisualStyleBackColor = true;
+            this.FunctionPanel_Hide.Click += new System.EventHandler(this.ProcessBackGround);
             // 
             // FunctionPanel_Stop
             // 
@@ -193,6 +200,7 @@
             this.FunctionPanel_Stop.TabIndex = 4;
             this.FunctionPanel_Stop.Text = "■";
             this.FunctionPanel_Stop.UseVisualStyleBackColor = true;
+            this.FunctionPanel_Stop.Click += new System.EventHandler(this.RecordingPause);
             // 
             // FunctionPanel_Record
             // 
@@ -202,6 +210,7 @@
             this.FunctionPanel_Record.TabIndex = 3;
             this.FunctionPanel_Record.Text = "▶";
             this.FunctionPanel_Record.UseVisualStyleBackColor = true;
+            this.FunctionPanel_Record.Click += new System.EventHandler(this.RecordingStart);
             // 
             // QueryPanel
             // 
@@ -212,11 +221,15 @@
             this.QueryPanel.Size = new System.Drawing.Size(582, 275);
             this.QueryPanel.TabIndex = 3;
             // 
-            // 설정ToolStripMenuItem
+            // DataList
             // 
-            this.설정ToolStripMenuItem.Name = "설정ToolStripMenuItem";
-            this.설정ToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
-            this.설정ToolStripMenuItem.Text = "설정(O)";
+            this.DataList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DataList.Location = new System.Drawing.Point(0, 0);
+            this.DataList.Name = "DataList";
+            this.DataList.RowTemplate.Height = 23;
+            this.DataList.Size = new System.Drawing.Size(580, 273);
+            this.DataList.TabIndex = 0;
             // 
             // process1
             // 
@@ -245,16 +258,6 @@
             this.label3.Size = new System.Drawing.Size(44, 12);
             this.label3.TabIndex = 5;
             this.label3.Text = "Tables";
-            // 
-            // DataList
-            // 
-            this.DataList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DataList.Location = new System.Drawing.Point(0, 0);
-            this.DataList.Name = "DataList";
-            this.DataList.RowTemplate.Height = 23;
-            this.DataList.Size = new System.Drawing.Size(580, 273);
-            this.DataList.TabIndex = 0;
             // 
             // Form1
             // 
