@@ -21,10 +21,9 @@ namespace DB_Project
         //
         public Form1()
         {
-             InitializeComponent();
+            InitializeComponent();
+            FunctionPanel.Enabled = false;
         }
-
-
 
         // LOGIN PANEL ///////////////////////////////////////////////
         private void LoginRequest(object sender, EventArgs e)
@@ -35,7 +34,33 @@ namespace DB_Project
             LoginSuccess = TryLogin(ID, password);
 
             if (LoginSuccess == true)
+            {
                 LoginPanel.Enabled = false;
+                FunctionPanel.Enabled = true;
+
+                MySqlDataReader reader = null;
+                connection.ChangeDatabase("mydb");
+
+                MySqlCommand cmd = new MySqlCommand("SHOW TABLES", connection);
+                try
+                {
+                    reader = cmd.ExecuteReader();
+                    TableList.Items.Clear();
+                    while (reader.Read())
+                    {
+                        TableList.Items.Add(reader.GetString(0));
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show("Failed to populate table list: " + ex.Message);
+                }
+                finally
+                {
+                    if (reader != null)
+                        reader.Close();
+                }
+            }
             else
                 LoginPanel_Password.Text = "";
         }
@@ -60,13 +85,13 @@ namespace DB_Project
             {
                 MessageBox.Show("Login Failed!");
                 result = false;
-            }finally
-            {
-                if(connection != null)
-                    connection.Close();
             }
 
             return result;
+        }
+
+        private void TableChange(object sender, EventArgs e)
+        {
         }
     }
 }

@@ -36,12 +36,25 @@
             this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.파일FToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.종료ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.편집EToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.도움말HToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.정보ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.종료ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FunctionPanel = new System.Windows.Forms.Panel();
+            this.FunctionPanel_Hide = new System.Windows.Forms.Button();
+            this.FunctionPanel_Stop = new System.Windows.Forms.Button();
+            this.FunctionPanel_Record = new System.Windows.Forms.Button();
+            this.QueryPanel = new System.Windows.Forms.Panel();
+            this.설정ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.process1 = new System.Diagnostics.Process();
+            this.TableList = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.DataList = new System.Windows.Forms.DataGridView();
             this.LoginPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.FunctionPanel.SuspendLayout();
+            this.QueryPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataList)).BeginInit();
             this.SuspendLayout();
             // 
             // LoginPanel
@@ -52,7 +65,7 @@
             this.LoginPanel.Controls.Add(this.LoginPanel_ID);
             this.LoginPanel.Controls.Add(this.label2);
             this.LoginPanel.Controls.Add(this.label1);
-            this.LoginPanel.Location = new System.Drawing.Point(408, 38);
+            this.LoginPanel.Location = new System.Drawing.Point(408, 27);
             this.LoginPanel.Name = "LoginPanel";
             this.LoginPanel.Size = new System.Drawing.Size(176, 52);
             this.LoginPanel.TabIndex = 0;
@@ -109,6 +122,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.파일FToolStripMenuItem,
             this.편집EToolStripMenuItem,
+            this.설정ToolStripMenuItem,
             this.도움말HToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -123,6 +137,12 @@
             this.파일FToolStripMenuItem.Name = "파일FToolStripMenuItem";
             this.파일FToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.파일FToolStripMenuItem.Text = "파일(&F)";
+            // 
+            // 종료ToolStripMenuItem
+            // 
+            this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
+            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.종료ToolStripMenuItem.Text = "종료";
             // 
             // 편집EToolStripMenuItem
             // 
@@ -144,11 +164,97 @@
             this.정보ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.정보ToolStripMenuItem.Text = "정보";
             // 
-            // 종료ToolStripMenuItem
+            // FunctionPanel
             // 
-            this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
-            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.종료ToolStripMenuItem.Text = "종료";
+            this.FunctionPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.FunctionPanel.Controls.Add(this.FunctionPanel_Hide);
+            this.FunctionPanel.Controls.Add(this.FunctionPanel_Stop);
+            this.FunctionPanel.Controls.Add(this.FunctionPanel_Record);
+            this.FunctionPanel.Location = new System.Drawing.Point(314, 27);
+            this.FunctionPanel.Name = "FunctionPanel";
+            this.FunctionPanel.Size = new System.Drawing.Size(88, 30);
+            this.FunctionPanel.TabIndex = 2;
+            // 
+            // FunctionPanel_Hide
+            // 
+            this.FunctionPanel_Hide.Font = new System.Drawing.Font("굴림", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.FunctionPanel_Hide.Location = new System.Drawing.Point(59, 3);
+            this.FunctionPanel_Hide.Name = "FunctionPanel_Hide";
+            this.FunctionPanel_Hide.Size = new System.Drawing.Size(23, 23);
+            this.FunctionPanel_Hide.TabIndex = 5;
+            this.FunctionPanel_Hide.Text = "＿";
+            this.FunctionPanel_Hide.UseVisualStyleBackColor = true;
+            // 
+            // FunctionPanel_Stop
+            // 
+            this.FunctionPanel_Stop.Location = new System.Drawing.Point(31, 3);
+            this.FunctionPanel_Stop.Name = "FunctionPanel_Stop";
+            this.FunctionPanel_Stop.Size = new System.Drawing.Size(23, 23);
+            this.FunctionPanel_Stop.TabIndex = 4;
+            this.FunctionPanel_Stop.Text = "■";
+            this.FunctionPanel_Stop.UseVisualStyleBackColor = true;
+            // 
+            // FunctionPanel_Record
+            // 
+            this.FunctionPanel_Record.Location = new System.Drawing.Point(3, 3);
+            this.FunctionPanel_Record.Name = "FunctionPanel_Record";
+            this.FunctionPanel_Record.Size = new System.Drawing.Size(23, 23);
+            this.FunctionPanel_Record.TabIndex = 3;
+            this.FunctionPanel_Record.Text = "▶";
+            this.FunctionPanel_Record.UseVisualStyleBackColor = true;
+            // 
+            // QueryPanel
+            // 
+            this.QueryPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.QueryPanel.Controls.Add(this.DataList);
+            this.QueryPanel.Location = new System.Drawing.Point(0, 85);
+            this.QueryPanel.Name = "QueryPanel";
+            this.QueryPanel.Size = new System.Drawing.Size(582, 275);
+            this.QueryPanel.TabIndex = 3;
+            // 
+            // 설정ToolStripMenuItem
+            // 
+            this.설정ToolStripMenuItem.Name = "설정ToolStripMenuItem";
+            this.설정ToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.설정ToolStripMenuItem.Text = "설정(O)";
+            // 
+            // process1
+            // 
+            this.process1.StartInfo.Domain = "";
+            this.process1.StartInfo.LoadUserProfile = false;
+            this.process1.StartInfo.Password = null;
+            this.process1.StartInfo.StandardErrorEncoding = null;
+            this.process1.StartInfo.StandardOutputEncoding = null;
+            this.process1.StartInfo.UserName = "";
+            this.process1.SynchronizingObject = this;
+            // 
+            // TableList
+            // 
+            this.TableList.FormattingEnabled = true;
+            this.TableList.Location = new System.Drawing.Point(314, 60);
+            this.TableList.Name = "TableList";
+            this.TableList.Size = new System.Drawing.Size(88, 20);
+            this.TableList.TabIndex = 4;
+            this.TableList.SelectedIndexChanged += new System.EventHandler(this.TableChange);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(264, 65);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 12);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Tables";
+            // 
+            // DataList
+            // 
+            this.DataList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DataList.Location = new System.Drawing.Point(0, 0);
+            this.DataList.Name = "DataList";
+            this.DataList.RowTemplate.Height = 23;
+            this.DataList.Size = new System.Drawing.Size(580, 273);
+            this.DataList.TabIndex = 0;
             // 
             // Form1
             // 
@@ -157,6 +263,10 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(584, 361);
             this.ControlBox = false;
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.TableList);
+            this.Controls.Add(this.QueryPanel);
+            this.Controls.Add(this.FunctionPanel);
             this.Controls.Add(this.LoginPanel);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -166,6 +276,9 @@
             this.LoginPanel.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.FunctionPanel.ResumeLayout(false);
+            this.QueryPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DataList)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -185,6 +298,16 @@
         private System.Windows.Forms.ToolStripMenuItem 편집EToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 도움말HToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 정보ToolStripMenuItem;
+        private System.Windows.Forms.Panel FunctionPanel;
+        private System.Windows.Forms.Button FunctionPanel_Stop;
+        private System.Windows.Forms.Button FunctionPanel_Record;
+        private System.Windows.Forms.Button FunctionPanel_Hide;
+        private System.Windows.Forms.ToolStripMenuItem 설정ToolStripMenuItem;
+        private System.Windows.Forms.Panel QueryPanel;
+        private System.Windows.Forms.DataGridView DataList;
+        private System.Diagnostics.Process process1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox TableList;
     }
 }
 
