@@ -22,11 +22,14 @@ namespace DB_Project
         // Value
         static List<Input> inputLog = new List<Input>();
         static Point lastMouseMove = new Point();
+        static bool isMouseMoved = false;
         //static string HookType = "";
         //static string HookRecord = "";
         bool LoginSuccess = false;
 
         static MySqlConnection connection;
+
+        static Log LogForm = new Log();
 
         int interval = 10;
         UserActivityHook actHook;
@@ -52,6 +55,7 @@ namespace DB_Project
         {
             InitializeComponent();
             FunctionPanel.Enabled = false;
+            LogForm.Show();
         }
 
         // LOGIN PANEL ///////////////////////////////////////////////
@@ -152,6 +156,7 @@ namespace DB_Project
         {
             actHook.Stop();
             InsertTimer.Stop();
+            count = 0;
         }
 
         private void ProcessBackGround(object sender, EventArgs e)
@@ -211,12 +216,12 @@ namespace DB_Project
             //insertCommand.Connection = connection;
 
             
-            label4.Text = (count++).ToString();
+            label4.Text = String.Format("{0} sec", (float)(count++)/(1000/interval));
 
-            if(lastMouseMove.X != -1 && lastMouseMove.Y != -1)
+            if(isMouseMoved == true)
                 WriteLog("Mouse", String.Format("Move x={0},y={1}", lastMouseMove.X, lastMouseMove.Y));
-            lastMouseMove.X = -1;
-            lastMouseMove.Y = -1;
+            isMouseMoved = false;
+
             using (MySqlCommand insertCommand = new MySqlCommand())
             {
                 insertCommand.Connection = connection;
@@ -264,9 +269,9 @@ namespace DB_Project
             else if (e.Delta != 0) WriteLog("Mouse", "Wheel " + (e.Delta > 0 ? "UP" : "DOWN"));
             else 
             {
-                //if((abs(lastMouseMove.X - e.X) > 20) || (abs(lastMouseMove.Y - e.Y) > 20))
+                if((abs(lastMouseMove.X - e.X) > 50) || (abs(lastMouseMove.Y - e.Y) > 50))
                 {
-                    //WriteLog("Mouse", String.Format("Move x={0},y={1}", e.X, e.Y));
+                    isMouseMoved = true;
                     lastMouseMove.X = e.X;
                     lastMouseMove.Y = e.Y;
                 }
@@ -291,6 +296,9 @@ namespace DB_Project
         public static void WriteLog(string type, string record)
         {
             inputLog.Add(new Input(type, record, GetActiveProcessFileName(), DateTime.Today.ToString("yyyyMMdd"), DateTime.Now.ToString("HH:mm:ss")));
+
+            LogForm.LogBox.AppendText(String.Format("[{0}] {1}{2}   - {3}{4}", DateTime.Now.ToString("HH:mm:ss"), record, Environment.NewLine, GetActiveProcessFileName(), Environment.NewLine));
+            LogForm.LogBox.SelectionStart = LogForm.LogBox.Text.Length;
         }
 
         public int abs(int x) { return x > 0 ? x : -x; }
