@@ -23,8 +23,10 @@ namespace DB_Project
         static List<Input> inputLog = new List<Input>();
         static Point lastMouseMove = new Point();
         static bool isMouseMoved = false;
-        //static string HookType = "";
-        //static string HookRecord = "";
+
+        string DBserver = "ihlnext.vps.phps.kr"; // "localhost";
+        string DBname = "jihwanProject"; // "mydb";
+
         bool LoginSuccess = false;
 
         static MySqlConnection connection;
@@ -42,13 +44,14 @@ namespace DB_Project
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
-        public static string GetActiveProcessFileName()
+        public static string GetActiveProcessName()
         {
             IntPtr hwnd = GetForegroundWindow();
             uint pid;
             GetWindowThreadProcessId(hwnd, out pid);
             Process p = Process.GetProcessById((int)pid);
-            return p.MainModule.ModuleName;
+            //return p.MainModule.ModuleName;
+            return p.ProcessName;
         }
         //
         public Form1()
@@ -69,7 +72,7 @@ namespace DB_Project
 
             // Load Tables
             MySqlDataReader reader = null;
-            connection.ChangeDatabase("mydb");
+            //connection.ChangeDatabase("mydb");
 
             MySqlCommand cmd = new MySqlCommand("SHOW TABLES", connection);
             try
@@ -113,7 +116,7 @@ namespace DB_Project
         private bool TryLogin(string ID, string Password)
         {
             bool result = true;
-            string strConn = @"Data Source=localhost;Database=mydb;User ID=" + ID + ";Password=" + Password + ";";
+            string strConn = String.Format(@"Data Source={0};Database={1};User ID={2};Password={3};", DBserver, DBname, ID, Password);
 
             connection = new MySqlConnection(strConn);
             try 
@@ -295,9 +298,9 @@ namespace DB_Project
         }
         public static void WriteLog(string type, string record)
         {
-            inputLog.Add(new Input(type, record, GetActiveProcessFileName(), DateTime.Today.ToString("yyyyMMdd"), DateTime.Now.ToString("HH:mm:ss")));
+            inputLog.Add(new Input(type, record, GetActiveProcessName(), DateTime.Today.ToString("yyyyMMdd"), DateTime.Now.ToString("HH:mm:ss")));
 
-            LogForm.LogBox.AppendText(String.Format("[{0}] {1}{2}   - {3}{4}", DateTime.Now.ToString("HH:mm:ss"), record, Environment.NewLine, GetActiveProcessFileName(), Environment.NewLine));
+            LogForm.LogBox.AppendText(String.Format("[{0}] {1}{2}   - {3}{4}", DateTime.Now.ToString("HH:mm:ss"), record, Environment.NewLine, GetActiveProcessName(), Environment.NewLine));
             LogForm.LogBox.SelectionStart = LogForm.LogBox.Text.Length;
         }
 
