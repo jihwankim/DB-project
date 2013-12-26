@@ -222,8 +222,6 @@ namespace DB_Project
                 insertCommand.Connection = connection;
                 for(int i=0; i<inputLog.Count; ++i)
                 {
-                
-
                         // Insert Application Name
                         if (FindElement( "SELECT name FROM application", inputLog[i].appName) == false)
                         {
@@ -283,7 +281,7 @@ namespace DB_Project
 
         public void MyKeyPress(object sender, KeyPressEventArgs e)
         {
-            WriteLog("Keyboard", String.Format("KeyPress {0}", e.ToString()));
+            WriteLog("Keyboard", String.Format("KeyPress {0}", e.KeyChar.ToString()));
         }
 
         public void MyKeyUp(object sender, KeyEventArgs e)
