@@ -21,11 +21,14 @@ namespace DB_Project
     {
         // Value
         static List<Input> inputLog = new List<Input>();
+        static Point lastMouseMove = new Point();
         //static string HookType = "";
         //static string HookRecord = "";
         bool LoginSuccess = false;
+
         static MySqlConnection connection;
-        int interval = 1000;
+
+        int interval = 10;
         UserActivityHook actHook;
         static System.Windows.Forms.Timer InsertTimer = new System.Windows.Forms.Timer();
 
@@ -153,12 +156,19 @@ namespace DB_Project
 
         private void ProcessBackGround(object sender, EventArgs e)
         {
-
+            Delay(1000, (o, b) => MessageBox.Show("Test"));
         }
 
 
         // Hooker
         //[STAThread]
+        static void Delay(int ms, EventHandler action)
+        {
+            var tmp = new Timer { Interval = ms };
+            tmp.Tick += new EventHandler((o, e) => tmp.Enabled = false);
+            tmp.Tick += action;
+            tmp.Enabled = true;
+        }
         void HookerInit()
         {
             // Hooker install
@@ -170,50 +180,100 @@ namespace DB_Project
             actHook.KeyPress += new KeyPressEventHandler(MyKeyPress);
             actHook.KeyUp += new KeyEventHandler(MyKeyUp);
         }
-        private static void InsertRecord(Object myObject, EventArgs myEventArgs)
+        static int count = 0;
+
+        private bool FindElement(string query, string item)
+        {
+            using(MySqlCommand command = new MySqlCommand())
+            {
+                command.Connection = connection;
+
+                // Insert Application Name
+                command.CommandText = query; 
+                command.ExecuteNonQuery();
+
+                using(MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read() == true)
+                    {
+                        if (reader[0].ToString() == item)
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+        private void InsertRecord(Object myObject, EventArgs myEventArgs)
         {
             InsertTimer.Stop();
 
-            for(int i=0; false && i<inputLog.Count; ++i)
+            //MySqlCommand insertCommand = new MySqlCommand();
+            //insertCommand.Connection = connection;
+
+            
+            label4.Text = (count++).ToString();
+
+            if(lastMouseMove.X != -1 && lastMouseMove.Y != -1)
+                WriteLog("Mouse", String.Format("Move x={0},y={1}", lastMouseMove.X, lastMouseMove.Y));
+            lastMouseMove.X = -1;
+            lastMouseMove.Y = -1;
+            using (MySqlCommand insertCommand = new MySqlCommand())
             {
-                // Insert Application Name
-                MySqlCommand insertCommand = new MySqlCommand();
-                //applicationName = GetActiveProcessFileName();
                 insertCommand.Connection = connection;
-                insertCommand.CommandText = "INSERT INTO application(name) VALUES(@name)";
+                for(int i=0; i<inputLog.Count; ++i)
+                {
+                
 
-                insertCommand.Parameters.AddWithValue("@name", inputLog[i].appName);
+                        // Insert Application Name
+                        if (FindElement( "SELECT name FROM application", inputLog[i].appName) == false)
+                        {
+                            //insertCommand.CommandText = "INSERT INTO application(name) VALUES(@name)";
+                            //insertCommand.Parameters.AddWithValue("@name", inputLog[i].appName);
+                            insertCommand.CommandText = String.Format(@"INSERT INTO application(name) VALUES('{0}')", inputLog[i].appName);
+                            insertCommand.ExecuteNonQuery();
+                        }
+                    
+                        // Insert Date
+                        if (FindElement( "SELECT DATE_FORMAT(STR_TO_DATE(YMD, '%Y-%m-%d'), '%Y%m%d') FROM date", inputLog[i].date ) == false)
+                        {
+                            //insertCommand.CommandText = "INSERT INTO date(YMD) VALUES(@YMD)";
+                            insertCommand.CommandText = String.Format(@"INSERT INTO date(YMD) VALUES('{0}')", inputLog[i].date);
+                            //insertCommand.Parameters.AddWithValue("@YMD", inputLog[i].date);
 
-                try { insertCommand.ExecuteNonQuery(); }
-                catch { }
+                            insertCommand.ExecuteNonQuery();
+                        }
 
-                // Insert Date
-                insertCommand.CommandText = "INSERT INTO date(YMD) VALUES(@YMD)";
+                        //Insert Input Data
+                        //insertCommand.CommandText = String.Format("INSERT INTO input(Type, Value, time, Date_YMD, Application_name) VALUES(@Type, @Value, @time, @Date_YMD, @Application_name)";
+                        insertCommand.CommandText = String.Format(@"INSERT INTO input(Type, Value, time, Date_YMD, Application_name) VALUES('{0}', '{1}', '{2}', '{3}', '{4}')",inputLog[i].Type, inputLog[i].Record, inputLog[i].time, inputLog[i].date, inputLog[i].appName);
 
-                insertCommand.Parameters.AddWithValue("@YMD", inputLog[i].date);
+                       // insertCommand.Parameters.AddWithValue("@Type", inputLog[i].Type);
+    //                     insertCommand.Parameters.AddWithValue("@Value", inputLog[i].Record);
+    //                     insertCommand.Parameters.AddWithValue("@time", inputLog[i].time);
+    //                     insertCommand.Parameters.AddWithValue("@Date_YMD", inputLog[i].date);
+    //                     insertCommand.Parameters.AddWithValue("@Application_name", inputLog[i].appName);
 
-                try { insertCommand.ExecuteNonQuery(); }
-                catch { }
-
-                //Insert Input Data
-                insertCommand.CommandText = "INSERT INTO input(Type, Value, time, Date_YMD, Application_name) VALUES(@Type, @Value, @time, @Date_YMD, @Application_name)";
-
-                insertCommand.Parameters.AddWithValue("@Type", inputLog[i].Type);
-                insertCommand.Parameters.AddWithValue("@Value", inputLog[i].Record);
-                insertCommand.Parameters.AddWithValue("@time", inputLog[i].time);
-                insertCommand.Parameters.AddWithValue("@Date_YMD", inputLog[i].date);
-                insertCommand.Parameters.AddWithValue("@Application_name", inputLog[i].appName);
-
-                try { insertCommand.ExecuteNonQuery(); }
-                catch { }
-            }
+                        insertCommand.ExecuteNonQuery();
+                    }
+                }
 
             inputLog.Clear();
             InsertTimer.Enabled = true;
         }
         public void MouseMoved(object sender, MouseEventArgs e)
         {
-            WriteLog("Mouse", String.Format("x={0},y={1},wheel={2}", e.X, e.Y, e.Delta));
+            if (e.Clicks > 0) WriteLog("Mouse", "Click " + e.Button.ToString() + String.Format(" x={0},y={1}", e.X, e.Y));
+            else if (e.Delta != 0) WriteLog("Mouse", "Wheel " + (e.Delta > 0 ? "UP" : "DOWN"));
+            else 
+            {
+                //if((abs(lastMouseMove.X - e.X) > 20) || (abs(lastMouseMove.Y - e.Y) > 20))
+                {
+                    //WriteLog("Mouse", String.Format("Move x={0},y={1}", e.X, e.Y));
+                    lastMouseMove.X = e.X;
+                    lastMouseMove.Y = e.Y;
+                }
+                
+            }
         }
 
         public void MyKeyDown(object sender, KeyEventArgs e)
@@ -230,13 +290,23 @@ namespace DB_Project
         {
             WriteLog("Keyboard", String.Format("KeyUp {0}", e.KeyData.ToString()));
         }
-        public void WriteLog(string type, string record)
+        public static void WriteLog(string type, string record)
         {
             inputLog.Add(new Input(type, record, GetActiveProcessFileName(), DateTime.Today.ToString("yyyyMMdd"), DateTime.Now.ToString("HH:mm:ss")));
         }
+
+        public int abs(int x) { return x > 0 ? x : -x; }
     }
     public class Input
     {
+        public Input()
+        {
+            Type = "";
+            Record = "";
+            appName = "";
+            date = "";
+            time = "";
+        }
         public Input(string iType, string iRecord, string iAppName, string iDate, string iTime)
         {
             Type = iType;
