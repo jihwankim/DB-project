@@ -24,6 +24,7 @@ namespace DB_Project
         // Class
         CLoginModule LoginModule;
         static Log LogForm = new Log();
+        static Option OptionForm = null;
 
         //
         public Main()
@@ -34,19 +35,14 @@ namespace DB_Project
             FunctionPanel.Enabled = false;
             LogForm.Show();
         }
-        
 
-        // Hooker
-        //[STAThread]
-        static void Delay(int ms, EventHandler action)
+        private void ShowSettingForm(object sender, EventArgs e)
         {
-            var tmp = new Timer { Interval = ms };
-            tmp.Tick += new EventHandler((o, e) => tmp.Enabled = false);
-            tmp.Tick += action;
-            tmp.Enabled = true;
-        }
-        
+            if (OptionForm != null)
+                OptionForm.Dispose();
 
-        public int abs(int x) { return x > 0 ? x : -x; }
+            OptionForm = new Option();
+            OptionForm.Show();
+        }
     }
 }

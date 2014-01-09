@@ -46,7 +46,7 @@ namespace DB_Project
         void HookerInit()
         {
             InsertTimer.Tick += new EventHandler(InsertRecord);
-            InsertTimer.Interval = interval;
+            InsertTimer.Interval = CGlobalVariable.Instance.interval;
 
             // Hooker install
             actHook = new UserActivityHook(); // crate an instance with global hooks
@@ -62,8 +62,15 @@ namespace DB_Project
         
         public void MouseMoved(object sender, MouseEventArgs e)
         {
-            if (e.Clicks > 0) WriteLog("Mouse", "Click " + e.Button.ToString().Substring(0, 1), e.X.ToString(), e.Y.ToString());
-            else if (e.Delta != 0) WriteLog("Mouse", "Wheel " + (e.Delta > 0 ? "UP" : "DOWN"), e.X.ToString(), e.Y.ToString());
+            if (e.Clicks > 0)
+            {
+                if (e.Button.ToString() == "Left" && CGlobalVariable.Instance.HookMouseLClick == true)
+                    WriteLog("Mouse", "Click " + e.Button.ToString().Substring(0, 1), e.X.ToString(), e.Y.ToString());
+
+                if (e.Button.ToString() == "Right" && CGlobalVariable.Instance.HookMouseRClick == true)
+                    WriteLog("Mouse", "Click " + e.Button.ToString().Substring(0, 1), e.X.ToString(), e.Y.ToString());
+
+            }else if (e.Delta != 0 && CGlobalVariable.Instance.HookMouseWheel == true) WriteLog("Mouse", "Wheel " + (e.Delta > 0 ? "UP" : "DOWN"), e.X.ToString(), e.Y.ToString());
             else
             {
                 if ((abs(lastMouseMove.X - e.X) > 50) || (abs(lastMouseMove.Y - e.Y) > 50))
@@ -78,17 +85,20 @@ namespace DB_Project
 
         public void MyKeyDown(object sender, KeyEventArgs e)
         {
-            WriteLog("Keyboard", "KeyDown", e.KeyData.ToString(), "");
+            if (CGlobalVariable.Instance.HookKeyDown == true)
+                WriteLog("Keyboard", "KeyDown", e.KeyData.ToString(), "");
         }
 
         public void MyKeyPress(object sender, KeyPressEventArgs e)
         {
-            WriteLog("Keyboard", "KeyPress", e.KeyChar.ToString(), "");
+            if (CGlobalVariable.Instance.HookKeyPress == true)
+                WriteLog("Keyboard", "KeyPress", e.KeyChar.ToString(), "");
         }
 
         public void MyKeyUp(object sender, KeyEventArgs e)
         {
-            WriteLog("Keyboard", "KeyUp", e.KeyData.ToString(), "");
+            if (CGlobalVariable.Instance.HookKeyUp == true)
+                WriteLog("Keyboard", "KeyUp", e.KeyData.ToString(), "");
         }
         public static void WriteLog(string InputType, string Type, string record1, string record2)
         {
@@ -97,5 +107,6 @@ namespace DB_Project
             LogForm.LogBox.AppendText(String.Format("[{0}] {1}{2}{3}{4}   - {5}{6}", DateTime.Now.ToString("HH:mm:ss"), Type, record1, record2, Environment.NewLine, GetActiveProcessName(), Environment.NewLine));
             LogForm.LogBox.SelectionStart = LogForm.LogBox.Text.Length;
         }
+        public int abs(int x) { return x > 0 ? x : -x; }
     }
 }

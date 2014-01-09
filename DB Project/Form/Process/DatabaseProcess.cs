@@ -23,9 +23,7 @@ namespace DB_Project
         static List<Input> inputLog = new List<Input>();
         static Point lastMouseMove = new Point();
         static bool isMouseMoved = false;
-        int interval = 10;//10;
-
-        private Dictionary<string, bool> ApplicationList;
+        
 
         // Record Update
         private DataTable data;
@@ -50,21 +48,6 @@ namespace DB_Project
             {
                 MessageBox.Show("Failed to populate table list: " + ex.Message);
             }
-            finally
-            {
-                if (reader != null)
-                    reader.Close();
-            }
-
-            // Read Application List
-            cmd = new MySqlCommand("SELECT name FROM Application", CGlobalVariable.Instance.connection);
-            try
-            {
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                    ApplicationList[reader.GetString(0)] = true;
-            }
-            catch { }
             finally
             {
                 if (reader != null)
@@ -98,7 +81,9 @@ namespace DB_Project
 
         private void ProcessBackGround(object sender, EventArgs e)
         {
-            Delay(1000, (o, b) => MessageBox.Show("Test"));
+//             base.OnDeactivate(e);
+//             this.Hide();
+            //Delay(1000, (o, b) => MessageBox.Show("Test"));
         }
 
         private void InsertRecord(Object myObject, EventArgs myEventArgs)

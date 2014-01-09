@@ -29,7 +29,15 @@ namespace DB_Project
         public MySqlConnection connection;
         public bool LoginSuccess = false;
 
+        public bool HookKeyDown = true;
+        public bool HookKeyPress = true;
+        public bool HookKeyUp = true;
 
+        public bool HookMouseMove = true;
+        public bool HookMouseLClick = true;
+        public bool HookMouseRClick = true;
+        public bool HookMouseWheel = true;
 
+        public int interval = 10;
     }
 }

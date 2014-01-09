@@ -155,6 +155,7 @@
             this.설정ToolStripMenuItem.Name = "설정ToolStripMenuItem";
             this.설정ToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.설정ToolStripMenuItem.Text = "설정(O)";
+            this.설정ToolStripMenuItem.Click += new System.EventHandler(this.ShowSettingForm);
             // 
             // 도움말HToolStripMenuItem
             // 
