@@ -1,6 +1,6 @@
 ﻿namespace DB_Project
 {
-    partial class Form1
+    partial class Main
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.
@@ -47,7 +47,6 @@
             this.FunctionPanel_Record = new System.Windows.Forms.Button();
             this.QueryPanel = new System.Windows.Forms.Panel();
             this.DataList = new System.Windows.Forms.DataGridView();
-            this.process1 = new System.Diagnostics.Process();
             this.TableList = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -232,16 +231,6 @@
             this.DataList.Size = new System.Drawing.Size(580, 273);
             this.DataList.TabIndex = 0;
             // 
-            // process1
-            // 
-            this.process1.StartInfo.Domain = "";
-            this.process1.StartInfo.LoadUserProfile = false;
-            this.process1.StartInfo.Password = null;
-            this.process1.StartInfo.StandardErrorEncoding = null;
-            this.process1.StartInfo.StandardOutputEncoding = null;
-            this.process1.StartInfo.UserName = "";
-            this.process1.SynchronizingObject = this;
-            // 
             // TableList
             // 
             this.TableList.FormattingEnabled = true;
@@ -269,7 +258,7 @@
             this.label4.TabIndex = 6;
             this.label4.Text = "w";
             // 
-            // Form1
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -284,7 +273,7 @@
             this.Controls.Add(this.LoginPanel);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "Main";
             this.Text = "DB Project #131018 kim-jihwan";
             this.LoginPanel.ResumeLayout(false);
             this.LoginPanel.PerformLayout();
@@ -319,7 +308,6 @@
         private System.Windows.Forms.ToolStripMenuItem 설정ToolStripMenuItem;
         private System.Windows.Forms.Panel QueryPanel;
         private System.Windows.Forms.DataGridView DataList;
-        private System.Diagnostics.Process process1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox TableList;
         private System.Windows.Forms.Label label4;
